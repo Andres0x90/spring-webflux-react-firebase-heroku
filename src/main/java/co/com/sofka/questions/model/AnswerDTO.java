@@ -2,10 +2,13 @@ package co.com.sofka.questions.model;
 
 
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 public class AnswerDTO {
+    private String id;
     @NotBlank(message = "Debe existir el userId para este objeto")
     private String userId;
     @NotBlank
@@ -14,6 +17,8 @@ public class AnswerDTO {
     private String answer;
 
     private Integer position;
+    private List<String> upVotes;
+    private List<String> downVotes;
 
 
     public AnswerDTO() {
@@ -24,6 +29,14 @@ public class AnswerDTO {
         this.userId = userId;
         this.questionId = questionId;
         this.answer = answer;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Integer getPosition() {
@@ -57,6 +70,22 @@ public class AnswerDTO {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    public List<String> getUpVotes() {
+        return upVotes;
+    }
+
+    public void setUpVotes(List<String> upVotes) {
+        this.upVotes = upVotes;
+    }
+
+    public List<String> getDownVotes() {
+        return downVotes;
+    }
+
+    public void setDownVotes(List<String> downVotes) {
+        this.downVotes = downVotes;
     }
 
     @Override

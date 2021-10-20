@@ -11,6 +11,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
@@ -72,6 +73,32 @@ public class QuestionRouter {
         return route(POST("/add").and(accept(MediaType.APPLICATION_JSON)),
                 request -> request.bodyToMono(AnswerDTO.class)
                         .flatMap(addAnswerDTO -> addAnswerUseCase.apply(addAnswerDTO)
+                                .flatMap(result -> ServerResponse.ok()
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .bodyValue(result))
+                        )
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> voteUp(VoteUpUseCase voteUpUseCase) {
+        return route(PUT("/vote/up/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> request.bodyToMono(Map.class)
+                        .flatMap(json -> voteUpUseCase.apply(request.pathVariable("id"),
+                                        json.get("userId").toString())
+                                .flatMap(result -> ServerResponse.ok()
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .bodyValue(result))
+                        )
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> voteDown(VoteDownUseCase voteDownUseCase) {
+        return route(PUT("/vote/down/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> request.bodyToMono(Map.class)
+                        .flatMap(json -> voteDownUseCase.apply(request.pathVariable("id"),
+                                        json.get("userId").toString())
                                 .flatMap(result -> ServerResponse.ok()
                                         .contentType(MediaType.APPLICATION_JSON)
                                         .bodyValue(result))

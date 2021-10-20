@@ -1,4 +1,4 @@
-const URL_BASE = ' https://desolate-basin-11674.herokuapp.com/';
+const URL_BASE = ' https://desolate-basin-11674.herokuapp.com';
 
 export const LOADING = 'LOADING'
 export const LOADED_SUCCESS = 'LOADED_SUCCESS'
