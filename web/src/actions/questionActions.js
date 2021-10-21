@@ -117,3 +117,47 @@ export function postAnswer(answer) {
     }
 }
 
+export function voteUp(answerId, userId, questionId) {
+    return async dispatch => {
+        dispatch(loading())
+        try {
+            await fetch(`${URL_BASE}/vote/up/${answerId}`,
+                {
+                    method: 'PUT',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({"userId":userId})
+                }
+            )
+            dispatch(success({redirect: null}));
+            dispatch(fetchQuestion(questionId));
+        } catch (error) {
+            dispatch(failure())
+        }
+    }
+}
+
+export function voteDown(answerId, userId, questionId) {
+    return async dispatch => {
+        dispatch(loading())
+        try {
+            await fetch(`${URL_BASE}/vote/down/${answerId}`,
+                {
+                    method: 'PUT',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({"userId":userId})
+                }
+            )
+
+            dispatch(success({redirect: null}));
+            dispatch(fetchQuestion(questionId));
+        } catch (error) {
+            dispatch(failure())
+        }
+    }
+}

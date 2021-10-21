@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 
-import { fetchQuestion } from '../actions/questionActions'
+import { fetchQuestion, voteDown, voteUp } from '../actions/questionActions'
 
 import { Question } from '../components/Question'
 import { Answer } from '../components/Answer'
 import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
+
 
 const SingleQuestionPage = ({
   match,
@@ -13,12 +15,16 @@ const SingleQuestionPage = ({
   question,
   hasErrors,
   loading,
-  userId
+  userId,
 }) => {
+
   const { id } = match.params
   useEffect(() => {
-    dispatch(fetchQuestion(id))
-  }, [dispatch, id])
+    dispatch(fetchQuestion(id));
+  }, [dispatch, id]);
+
+
+ const {handleSubmit} = useForm();
 
   const renderQuestion = () => {
     if (loading.question) return <p>Loading question...</p>
@@ -27,9 +33,26 @@ const SingleQuestionPage = ({
     return <Question question={question} />
   }
 
+  const onClickVoteUp = (answerId, userId, questionId)=> dispatch(voteUp(answerId, userId, questionId));
+  const onClickVoteDown = (answerId, userId, questionId)=> dispatch(voteDown(answerId, userId, questionId));
+ 
+
   const renderAnswers = () => {
     return (question.answers && question.answers.length) ? question.answers.map(answer => (
-      <Answer key={answer.id} answer={answer} />
+      <div key={answer.id}>
+        <Answer  answer={answer} />
+       {userId?(<div>
+        <button className="btn btn-success" disabled={answer.upVotes
+        .find((userIdVoted) => userId === userIdVoted)} 
+        onClick={handleSubmit(()=> onClickVoteUp(answer.id, userId, id))}>It's useful</button>
+        <button className="btn btn-danger mx-3" disabled={answer.downVotes
+        .find((userIdVoted) => userId === userIdVoted)} 
+         onClick={handleSubmit(()=> 
+          onClickVoteDown(answer.id, userId, id))}>It's useless</button>
+       </div>):(<div></div>)}
+        
+  
+      </div>
     )) : <p>Empty answer!</p>;
   }
 
