@@ -1,5 +1,6 @@
 package co.com.sofka.questions.usecases;
 
+import co.com.sofka.questions.model.AnswerDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Mono;
@@ -9,12 +10,14 @@ import reactor.core.publisher.Mono;
 public class VoteUpUseCase {
     private final GetAnswerUseCase getAnswerUseCase;
     private final UpdateAnswerUseCase updateAnswerUseCase;
+    private final CalculateAnswerPositionsUseCase calculateAnswerPositionsUseCase;
     private final MapperUtils mapperUtils;
 
     public VoteUpUseCase(GetAnswerUseCase getAnswerUseCase, UpdateAnswerUseCase updateAnswerUseCase
-    , MapperUtils mapperUtils) {
+    , CalculateAnswerPositionsUseCase calculateAnswerPositionsUseCase, MapperUtils mapperUtils) {
         this.getAnswerUseCase = getAnswerUseCase;
         this.updateAnswerUseCase = updateAnswerUseCase;
+        this.calculateAnswerPositionsUseCase = calculateAnswerPositionsUseCase;
         this.mapperUtils = mapperUtils;
     }
 
@@ -28,6 +31,8 @@ public class VoteUpUseCase {
                     return answer;
                 })
                 .map(mapperUtils.mapEntityToAnswer())
-                .flatMap(updateAnswerUseCase::apply).then();
+                .flatMap(updateAnswerUseCase)
+                .map(AnswerDTO::getQuestionId)
+                .flatMap(calculateAnswerPositionsUseCase);
     }
 }
