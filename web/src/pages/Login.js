@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { auth } from '../components/FirebaseService';
 import { connect } from 'react-redux';
 import { authFailure } from '../actions/authActions';
 
-const Login = ({dispatch, error}) => {
+const Login = ({dispatch, error, isLoading}) => {
 
     const {register, handleSubmit} = useForm();
-    
+
     const onSubmit = (data) =>
     {
         auth.signInWithEmailAndPassword(data.email, data.password)
@@ -36,7 +36,7 @@ const Login = ({dispatch, error}) => {
 
 const mapToProps = state =>
 ({
-    error: state.auth.error
+    error: state.auth.error,
 })
 
 export default connect(mapToProps)(Login);

@@ -2,47 +2,28 @@ import React, { useEffect, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 import { connect } from 'react-redux';
-import { authFailure } from '../actions/authActions';
-import { failure, loading, success } from '../actions/questionActions';
-import { db } from '../components/FirebaseService';
+import { getUser, success, updateUser } from '../actions/userActions';
 
 
-const Profile = ({dispatch, userId, email, error, isLoading}) => {
+const Profile = ({dispatch, userId, email, error, isLoading, user}) => {
 
     const {register, handleSubmit, setValue} = useForm();
-    const userRef = db.collection("user");
     const [updateSuccess, setUpdateSucess] = useState();
 
     useEffect(()=>
     {
-        dispatch(loading())
-        userRef.doc(userId).get().then((doc)=>
-        {
-            if (doc.exists)
-            {
-                const data = doc.data();
-                setValue("name", data.name);
-                setValue("last_name", data.last_name);
-            }
-            dispatch(success());
-        });
-    },[]);
+        dispatch(getUser(userId));
+
+    },[dispatch]);
+
+    setValue("name",user?.name);
+    setValue("lastName",user?.lastName);
 
     const onSubmit = (data) =>
     {
-        dispatch(loading());
-        userRef.doc(userId).set({
-           "name": data.name,
-            "last_name": data.last_name
-        })
-        .then(()=> {
-            setUpdateSucess('Data updated successfully');
-            dispatch(success());
-        })
-        .catch(() => {
-            dispatch(authFailure("Error! the information couldn't be updated"));
-            dispatch(failure());
-        })
+        data.id = userId;
+        data.email = email;
+        dispatch(updateUser(data))
     }
    
     return <section>
@@ -55,7 +36,7 @@ const Profile = ({dispatch, userId, email, error, isLoading}) => {
         </div>
         <div class="mb-3">
             <label for="last_name" class="form-label">Last Name</label>
-            <input type="text" class="form-control" {...register("last_name", {required:true})} 
+            <input type="text" class="form-control" {...register("lastName", {required:true})} 
             disabled={isLoading}/>
         </div>
         <div class="mb-3">
@@ -64,7 +45,6 @@ const Profile = ({dispatch, userId, email, error, isLoading}) => {
              placeholder="name@example.com" aria-describedby="emailHelp" 
              value={email}  readOnly={true}/>
         </div>
-        <p>{error?error: updateSuccess}</p>
         <button type="submit" class="btn btn-danger">{isLoading?'Loading...':'Update'}</button>
         </form>
     </section>
@@ -74,8 +54,9 @@ const mapToProps = state =>
 ({
     userId: state.auth.uid,
     email: state.auth.email,
-    error: state.auth.error,
-    isLoading: state.question.loading
+    error: state.user.error,
+    isLoading: state.user.loading,
+    user: state.user.user
 })
 
 export default connect(mapToProps)(Profile);
