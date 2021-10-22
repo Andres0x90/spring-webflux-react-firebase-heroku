@@ -20,6 +20,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import Login from './pages/Login';
 import Register from './pages/Register';
 import { auth, GoogleProvider } from './components/FirebaseService';
+import Profile from './pages/Profile';
 
 
 const App = ({ dispatch }) => {
@@ -41,6 +42,7 @@ const App = ({ dispatch }) => {
             <Route exact path="/list" component={OwnerQuestionsPage} />
             <Route exact path="/answer/:id" component={AnswerFormPage} />
             <Route exact path="/new" component={QuestionFormPage} />
+            <Route exact path="/profile" component={Profile} />
             <Redirect to="/" />
           </Switch>
         </> :
