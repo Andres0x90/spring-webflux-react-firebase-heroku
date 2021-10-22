@@ -1,6 +1,7 @@
 package co.com.sofka.questions.services;
 
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -23,7 +24,7 @@ public class EmailService {
             }
         });
     }
-    public void sendmail(String email, String question){
+    public Mono<Void> sendmail(String email, String question){
         Session session = createSession();
 
         Message msg = new MimeMessage(session);
@@ -31,13 +32,14 @@ public class EmailService {
             msg.setFrom(new InternetAddress("questionsandanswers.andres.sofka@gmail.com", false));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
             msg.setSubject("Notificacion de pregunta respondida - QuestionAndAnswers");
-            msg.setContent("Hola usuario.\r\nEste correo es para informarle que se ha " +
-                            "agregado una nueva respuesta a su pregunta " + question + "\r\nVisite nuestro sitio para verla"
+            msg.setContent("Hola usuario.<br>Este correo es para informarle que se ha " +
+                            "agregado una nueva respuesta a su pregunta " + question + "<br>Visite nuestro sitio para verla."
                     , "text/html");
             msg.setSentDate(new Date());
             Transport.send(msg);
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+        return Mono.empty();
     }
 }
