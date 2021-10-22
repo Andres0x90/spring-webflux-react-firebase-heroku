@@ -16,6 +16,7 @@ const Login = ({dispatch, error}) => {
     }
    
     return <section>
+        <h1>Formulario de login</h1>
         <form className="my-3" onSubmit={handleSubmit(onSubmit)}>
         <div class="mb-3">
             <label for="exampleInputEmail1" class="form-label">Email address</label>

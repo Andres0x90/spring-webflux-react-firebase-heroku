@@ -13,10 +13,12 @@ const FormPage = ({ dispatch, loading, redirect, match,hasErrors, question, user
     const onSubmit = data => {
         data.userId =  userId;
         data.questionId = id;
+        data.email = question.email;
         dispatch(postAnswer(data));
     };
 
     useEffect(() => {
+        console.log(question);
         dispatch(fetchQuestion(id))
     }, [dispatch, id])
 

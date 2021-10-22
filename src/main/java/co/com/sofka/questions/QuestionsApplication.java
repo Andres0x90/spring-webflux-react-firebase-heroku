@@ -13,8 +13,6 @@ public class QuestionsApplication {
 
     public static void main(String[] args) throws MessagingException, IOException {
     SpringApplication.run(QuestionsApplication.class, args);
-    EmailService emailService = new EmailService();
-    emailService.sendmail();
     }
 
 }
