@@ -12,6 +12,8 @@ public class QuestionDTO {
     @NotBlank
     private String userId;
     @NotBlank
+    private String email;
+    @NotBlank
     private String question;
     @NotBlank
     private String type;
@@ -24,16 +26,18 @@ public class QuestionDTO {
 
     }
 
-    public QuestionDTO(String userId, String question, String type, String category) {
+    public QuestionDTO(String userId,String email, String question, String type, String category) {
         this.userId = userId;
+        this.email = email;
         this.question = question;
         this.type = type;
         this.category = category;
     }
 
-    public QuestionDTO(String id, String userId, String question, String type, String category) {
+    public QuestionDTO(String id, String userId, String email, String question, String type, String category) {
         this.id = id;
         this.userId = userId;
+        this.email = email;
         this.question = question;
         this.type = type;
         this.category = category;
@@ -62,6 +66,14 @@ public class QuestionDTO {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getQuestion() {

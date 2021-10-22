@@ -9,6 +9,7 @@ public class Question {
     @Id
     private String id;
     private String userId;
+    private String email;
     private String question;
     private String type;
     private String category;
@@ -28,6 +29,14 @@ public class Question {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getQuestion() {
