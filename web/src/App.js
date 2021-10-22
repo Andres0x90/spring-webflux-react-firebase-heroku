@@ -4,10 +4,9 @@ import {
   Switch,
   Route,
   Redirect,
+  Link,
 } from 'react-router-dom'
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
+
 import { login, logout } from './actions/authActions';
 
 import { PublicNavbar, PrivateNavbar } from './components/Navbar'
@@ -18,17 +17,10 @@ import QuestionFormPage from './pages/QuestionFormPage'
 import AnswerFormPage from './pages/AnswerFormPage'
 import OwnerQuestionsPage from './pages/OwnerQuestionsPage'
 import { useAuthState } from "react-firebase-hooks/auth";
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { auth, GoogleProvider } from './components/FirebaseService';
 
-firebase.initializeApp({
-  apiKey: "AIzaSyAoFn-ix8eTFTlbTfJX6zLmDbA_deQ9Li0",
-  authDomain: "question-and-answer-df3c7.firebaseapp.com",
-  projectId: "question-and-answer-df3c7",
-  storageBucket: "question-and-answer-df3c7.appspot.com",
-  messagingSenderId: "816410372904",
-  appId: "1:816410372904:web:5c35e74b668b53491f7e1d"
-});
-
-const auth = firebase.auth();
 
 const App = ({ dispatch }) => {
   const [user] = useAuthState(auth);
@@ -61,6 +53,8 @@ const App = ({ dispatch }) => {
             <Route exact path="/questions" component={QuestionsPage} />
             <Route exact path="/question/:id" component={SingleQuestionPage} />
             <Route exact path="/answer/:id" component={AnswerFormPage} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
             <Redirect to="/" />
           </Switch>
         </>
@@ -72,10 +66,14 @@ const App = ({ dispatch }) => {
 
 function SignIn() {
   const signInWithGoogle = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
+    const provider = GoogleProvider();
     auth.signInWithPopup(provider);
   };
-  return <button className="button right" onClick={signInWithGoogle}>Sign in with google</button>;
+  return <div className="">
+    <button className="button right" onClick={signInWithGoogle}>Sign in with google</button>
+    <Link to="/login" className="button right mx-2" >Sign in</Link >
+
+  </div>;
 }
 
 function SignOut({ dispatch }) {

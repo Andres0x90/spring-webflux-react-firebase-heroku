@@ -12,6 +12,8 @@ export default function authReducer(state = initialState, action) {
       return {email: payload.email, uid: payload.uid }
     case actions.LOGOUT:
       return initialState
+    case actions.AUTH_ERROR:
+        return {...state, error: action.payload.error}
     default:
       return state
   }
