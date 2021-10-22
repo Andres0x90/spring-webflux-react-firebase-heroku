@@ -16,13 +16,11 @@ import java.util.function.Function;
 public class UpdateUserUseCase implements Function<UserDTO, Mono<UserDTO>> {
     private final UserRepository userRepository;
     private final MapperUtils mapperUtils;
-    private final GetUserUseCase getUserUseCase;
 
     public UpdateUserUseCase(MapperUtils mapperUtils, UserRepository userRepository
-    ,GetUserUseCase getUserUseCase) {
+    ) {
         this.userRepository = userRepository;
         this.mapperUtils = mapperUtils;
-        this.getUserUseCase = getUserUseCase;
     }
     @Override
     public Mono<UserDTO> apply(UserDTO userDTO) {
