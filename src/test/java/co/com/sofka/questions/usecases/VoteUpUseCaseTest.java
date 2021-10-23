@@ -4,7 +4,7 @@ import co.com.sofka.questions.model.AnswerDTO;
 import co.com.sofka.questions.model.QuestionDTO;
 import co.com.sofka.questions.reposioties.AnswerRepository;
 import co.com.sofka.questions.reposioties.QuestionRepository;
-import co.com.sofka.questions.services.EmailService;
+import co.com.sofka.questions.reposioties.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,25 +19,23 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 
-class AddAnswerUseCaseTest {
+class VoteUpUseCaseTest {
     AnswerRepository answerRepository;
     MapperUtils mapperUtils;
     GetAnswerUseCase getAnswerUseCase;
     UpdateAnswerUseCase updateAnswerUseCase;
-    CalculateAnswerPositionsUseCase calculateAnswerPositionsUseCase;
+   CalculateAnswerPositionsUseCase calculateAnswerPositionsUseCase;
     GetUseCase getUseCase;
     QuestionRepository questionRepository;
-    EmailService emailService;
 
     @BeforeEach
     public void setup() {
         mapperUtils = new MapperUtils();
-        emailService = mock(EmailService.class);
         answerRepository = mock(AnswerRepository.class);
         questionRepository = mock(QuestionRepository.class);
-
         getAnswerUseCase = new GetAnswerUseCase(mapperUtils, answerRepository);
         updateAnswerUseCase = new UpdateAnswerUseCase(mapperUtils, answerRepository, getAnswerUseCase);
         getUseCase = new GetUseCase(mapperUtils,questionRepository, answerRepository);
@@ -45,29 +43,25 @@ class AddAnswerUseCaseTest {
     }
 
     @Test
-    public void addAnswerUseCase()
+    public void voteUp()
     {
         var answer = getAnswerData();
         var question = getQuestionData();
+        when(answerRepository.findById("xxxx")).thenReturn(Mono.just(answer).map(mapperUtils.mapperToAnswer()));
         when(answerRepository.save(Mockito.any())).thenReturn(Mono.just(answer).map(mapperUtils.mapperToAnswer()));
         when(questionRepository.findById("qqqq")).thenReturn(Mono.just(question).map(mapperUtils.mapperToQuestion(question.getId())));
         when(answerRepository.findAllByQuestionId("qqqq")).thenReturn(Flux.just(answer).map(mapperUtils.mapperToAnswer()));
+        var answerVotedUp = new VoteUpUseCase(getAnswerUseCase,updateAnswerUseCase, calculateAnswerPositionsUseCase, mapperUtils);
 
-        var addAnswer = new AddAnswerUseCase(mapperUtils, getUseCase,answerRepository, emailService);
-
-        StepVerifier.create(addAnswer.apply(answer))
-                .expectNextMatches(questionDTO ->
-                {
-                    return questionDTO.getAnswers().contains(answer);
-                }).verifyComplete();
+        StepVerifier.create(answerVotedUp.apply("xxxx", "uuuu"))
+        .verifyComplete();
     }
 
     AnswerDTO getAnswerData()
     {
-        var answer = new AnswerDTO("qqqq", "uuuu", "answer1");
-        answer.setId("xxxx");
-        answer.setQuestionId("qqqq");
-        answer.setUpVotes(new ArrayList<>());
+       var answer = new AnswerDTO("qqqq", "uuuu", "answer1");
+     answer.setId("xxxx");
+       answer.setUpVotes(new ArrayList<>());
         answer.setDownVotes(new ArrayList<>());
         return answer;
     }

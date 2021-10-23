@@ -1,9 +1,9 @@
 package co.com.sofka.questions.usecases;
 
 import co.com.sofka.questions.model.AnswerDTO;
-import co.com.sofka.questions.model.QuestionDTO;
+import co.com.sofka.questions.model.UserDTO;
 import co.com.sofka.questions.reposioties.AnswerRepository;
-import co.com.sofka.questions.reposioties.QuestionRepository;
+import co.com.sofka.questions.reposioties.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -20,41 +20,37 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 
-class DeleteUseCaseTest {
-    QuestionRepository questionRepository;
-    MapperUtils mapperUtils;
+class UpdateAnswerUseCaseTest {
     AnswerRepository answerRepository;
+    MapperUtils mapperUtils;
 
     @BeforeEach
     public void setup() {
         mapperUtils = new MapperUtils();
-        questionRepository = mock(QuestionRepository.class);
         answerRepository = mock(AnswerRepository.class);
     }
     @Test
-    public void deleteQuestion()
+    public void updateUserUseCaseTest()
     {
-        var deleteQuestion = new DeleteUseCase(answerRepository, questionRepository);
-        var question = getQuestionData();
         var answer = getAnswerData();
-        when(questionRepository.findById("xxxx")).thenReturn(Mono.just(question).map(mapperUtils.mapperToQuestion(question.getId())));
-        when(answerRepository.findAllByQuestionId("xxxx")).thenReturn(Flux.just(answer).map(mapperUtils.mapperToAnswer()));
-        when(questionRepository.deleteById("xxxx")).thenReturn(Mono.empty());
-        StepVerifier.create(deleteQuestion.apply("xxxx")
-        );
-    }
-    QuestionDTO getQuestionData()
-    {
-        var question = new QuestionDTO();
-        question.setId("xxxx");
-        question.setType("type1");
-        question.setCategory("category1");
-        return question;
+        when(answerRepository.findById("xxxx")).thenReturn(Mono.just(answer).map(mapperUtils.mapperToAnswer()));
+        when(answerRepository.save(Mockito.any())).thenReturn(Mono.just(answer).map(mapperUtils.mapperToAnswer()));
+        GetAnswerUseCase getAnswerUseCase = new GetAnswerUseCase(mapperUtils, answerRepository);
+        var updateAnswer = new UpdateAnswerUseCase(mapperUtils,answerRepository,getAnswerUseCase);
+
+        StepVerifier.create(updateAnswer.apply(answer))
+                .expectNextMatches(answerDTO ->
+                {
+                    answer.getQuestionId().equalsIgnoreCase(answerDTO.getQuestionId());
+                    answer.getUserId().equalsIgnoreCase(answerDTO.getUserId());
+                    answer.getAnswer().equalsIgnoreCase(answerDTO.getAnswer());
+                    return true;
+                }).verifyComplete();
     }
     AnswerDTO getAnswerData()
     {
         var answer = new AnswerDTO("qqqq", "uuuu", "answer1");
-        answer.setId("aaaa");
+        answer.setId("xxxx");
         answer.setQuestionId("qqqq");
         answer.setUpVotes(new ArrayList<>());
         answer.setDownVotes(new ArrayList<>());

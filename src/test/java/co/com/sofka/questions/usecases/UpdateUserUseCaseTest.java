@@ -4,7 +4,9 @@ import co.com.sofka.questions.model.UserDTO;
 import co.com.sofka.questions.reposioties.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -12,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 class UpdateUserUseCaseTest {
     UserRepository userRepository;
     MapperUtils mapperUtils;
